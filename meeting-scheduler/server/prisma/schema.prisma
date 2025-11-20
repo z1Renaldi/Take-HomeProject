@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Organizer {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  timeZone  String
+  settings  Settings?
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Settings {
+  id            String   @id @default(cuid())
+  organizerId   String   @unique
+  workingHours  Json
+  durationMin   Int
+  bufferMin     Int
+  minNoticeMin  Int
+  blackoutDates Json
+  organizer     Organizer @relation(fields: [organizerId], references: [id])
+}
+
+model Booking {
+  id           String   @id @default(cuid())
+  organizerId  String
+  startUtc     DateTime
+  endUtc       DateTime
+  inviteeName  String
+  inviteeEmail String
+  status       BookingStatus @default(CONFIRMED)
+  createdAt    DateTime @default(now())
+  organizer    Organizer @relation(fields: [organizerId], references: [id])
+
+  @@index([organizerId, startUtc])
+  @@unique([organizerId, startUtc])
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
