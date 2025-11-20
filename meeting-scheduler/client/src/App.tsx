@@ -28,29 +28,24 @@ export default function App() {
   const [org, setOrg] = useState<Organizer | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Organizer picker
   const [orgId, setOrgId] = useState<string>("");
   const [orgList, setOrgList] = useState<
     { id: string; name: string; timeZone: string }[]
   >([]);
 
-  // Date picker
   const [selectedDate, setSelectedDate] = useState(
     DateTime.local().toFormat("yyyy-LL-dd")
   );
   const minDate = DateTime.local().toFormat("yyyy-LL-dd");
   const maxDate = DateTime.local().plus({ days: 13 }).toFormat("yyyy-LL-dd");
 
-  // Reschedule modal
   const [rsOpen, setRsOpen] = useState(false);
   const [rsBookingId, setRsBookingId] = useState<string | null>(null);
 
-  // Cancel modal
   const [cnOpen, setCnOpen] = useState(false);
   const [cnBookingId, setCnBookingId] = useState<string | null>(null);
   const [cnBusy, setCnBusy] = useState(false);
 
-  // INIT: ambil daftar organizer & pilih default / dari URL ?org=
   useEffect(() => {
     (async () => {
       const qs = new URLSearchParams(location.search);
@@ -61,7 +56,6 @@ export default function App() {
     })();
   }, []);
 
-  // LOAD data untuk organizer terpilih
   useEffect(() => {
     if (!orgId) return;
     void loadFor(orgId);
@@ -126,19 +120,16 @@ export default function App() {
     }
   };
 
-  // Buka modal reschedule
   const onReschedule = (b: Booking) => {
     setRsBookingId(b.id);
     setRsOpen(true);
   };
 
-  // Buka modal cancel
   const askCancel = (id: string) => {
     setCnBookingId(id);
     setCnOpen(true);
   };
 
-  // Eksekusi cancel dari modal
   const doCancel = async () => {
     if (!cnBookingId) return;
     setCnBusy(true);
@@ -275,7 +266,6 @@ export default function App() {
             )}
           </div>
 
-          {/* Organizer dashboard + settings */}
           <div className="card">
             <h2 className="card-title">Organizer Dashboard</h2>
             {bookings.length === 0 ? (
@@ -325,7 +315,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Reschedule Modal */}
         {orgId && rsOpen && rsBookingId && (
           <RescheduleModal
             open={rsOpen}
